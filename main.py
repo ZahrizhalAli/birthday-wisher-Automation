@@ -3,12 +3,12 @@ import random
 import datetime as dt
 from memory_profiler import profile
 import smtplib
-from decouple import config
+import os
 
-@profile
+# @profile
 def main():
-  username = "beardwhite456@gmail.com"
-  password = config("PASS")
+  username = os.environ.get('EMAILFROM')
+  password = os.environ.get('PASS')
   data = pandas.read_csv("birthdays.csv")
   new_data = data.to_dict("records")
   user_data = random.choice(new_data)
@@ -23,9 +23,10 @@ def main():
           with open(f"./letter_templates/{random.choice(letters)}", "r") as file:
               current_file = file.read()
               new_letter = current_file.replace("[NAME]", user_data["name"])
-          connection.sendmail(from_addr=username, to_addrs="livinglavidaloca29@gmail.com",
+          connection.sendmail(from_addr=username, to_addrs=os.environ.get('EMAILTO'),
                             msg=f"Subject:HBD{user_data['name']}\n\n{new_letter}")
           print("COMPLETE")
 
 if __name__ == '__main__':
   main()
+# print(os.environ.get('PASS'))
